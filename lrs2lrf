@@ -1,0 +1,9 @@
+#!/bin/sh
+path=`readlink -e $0`
+base=`dirname $path`
+lib=$base/lib
+export LD_LIBRARY_PATH=$lib:$LD_LIBRARY_PATH
+export MAGICK_CONFIGURE_PATH=$lib/ImageMagick/config
+export MAGICK_CODER_MODULE_PATH=$lib/ImageMagick/modules-Q16/coders
+export MAGICK_CODER_FILTER_PATH=$lib/ImageMagick/modules-Q16/filters
+$base/bin/lrs2lrf "$@"

@@ -1,0 +1,56 @@
+__license__   = 'GPL v3'
+__copyright__ = '2008-2010, Darko Miletic <darko.miletic at gmail.com>'
+'''
+infobae.com
+'''
+
+from calibre.web.feeds.news import BasicNewsRecipe
+
+class Infobae(BasicNewsRecipe):
+    title                 = 'Infobae.com'
+    __author__            = 'Darko Miletic and Sujata Raman'
+    description           = 'Informacion Libre las 24 horas'
+    publisher             = 'Infobae.com'
+    category              = 'news, politics, Argentina'
+    oldest_article        = 1
+    max_articles_per_feed = 100
+    no_stylesheets        = True
+    use_embedded_content  = False
+    language              = 'es'
+    encoding              = 'cp1252'
+    masthead_url          = 'http://www.infobae.com/imgs/header/header.gif'
+    remove_javascript     = True
+    remove_empty_feeds    = True
+    extra_css             = '''
+                              body{font-family:Arial,Helvetica,sans-serif;}
+                              .popUpTitulo{color:#0D4261; font-size: xx-large}
+                            '''
+    
+    conversion_options = {
+                          'comment'          : description
+                        , 'tags'             : category
+                        , 'publisher'        : publisher
+                        , 'language'         : language
+                        , 'linearize_tables' : True
+                        }
+    
+
+    feeds = [
+              (u'Noticias'  , u'http://www.infobae.com/adjuntos/html/RSS/hoy.xml'       )
+             ,(u'Salud'     , u'http://www.infobae.com/adjuntos/html/RSS/salud.xml'     )
+             ,(u'Tecnologia', u'http://www.infobae.com/adjuntos/html/RSS/tecnologia.xml')
+             ,(u'Deportes'  , u'http://www.infobae.com/adjuntos/html/RSS/deportes.xml'  )
+            ]
+
+    def print_version(self, url):
+        article_part = url.rpartition('/')[2]
+        article_id= article_part.partition('-')[0]
+        return 'http://www.infobae.com/notas/nota_imprimir.php?Idx=' + article_id
+
+    def postprocess_html(self, soup, first):
+        for tag in soup.findAll(name='strong'):
+             tag.name = 'b'
+        return soup
+
+
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuremap [
+<!ELEMENT configuremap (configure)+>
+<!ELEMENT configure (#PCDATA)>
+<!ATTLIST configure name CDATA #REQUIRED>
+<!ATTLIST configure value CDATA #REQUIRED>
+]>
+<configuremap>
+  <configure name="NAME" value="ImageMagick"/>
+  <configure name="LIB_VERSION" value="0x665"/>
+  <configure name="LIB_VERSION_NUMBER" value="6,6,5,6"/>
+  <configure name="RELEASE_DATE" value="2010-11-27"/>
+  <configure name="CONFIGURE" value="./configure  '--prefix=/usr' '--build=i686-pc-linux-gnu' '--host=i686-pc-linux-gnu' '--mandir=/usr/share/man' '--infodir=/usr/share/info' '--datadir=/usr/share' '--sysconfdir=/etc' '--localstatedir=/var/lib' '--disable-dependency-tracking' '--disable-static' '--disable-hdri' '--disable-opencl' '--with-threads' '--without-included-ltdl' '--with-ltdl-include=/usr/include' '--with-ltdl-lib=/usr/lib' '--with-modules' '--with-quantum-depth=16' '--with-magick-plus-plus' '--with-perl' '--with-perl-options=INSTALLDIRS=vendor' '--with-gs-font-dir=/usr/share/fonts/default/ghostscript' '--with-bzlib' '--with-x' '--with-zlib' '--without-autotrace' '--without-dps' '--without-djvu' '--with-dejavu-font-dir=/usr/share/fonts/dejavu' '--without-fftw' '--without-fpx' '--with-fontconfig' '--with-freetype' '--without-gslib' '--without-gvc' '--without-jbig' '--with-jpeg' '--without-jp2' '--without-lcms' '--without-lcms2' '--without-lqr' '--without-openexr' '--with-png' '--with-rsvg' '--with-tiff' '--with-windows-font-dir=/usr/share/fonts/corefonts' '--with-wmf' '--with-xml' '--enable-openmp' 'build_alias=i686-pc-linux-gnu' 'host_alias=i686-pc-linux-gnu' 'CFLAGS=-O2 -march=i686 -pipe' 'LDFLAGS=-Wl,-O1 -Wl,--as-needed' 'CXXFLAGS=-O2 -march=i686 -pipe'"/>
+  <configure name="PREFIX" value="/usr"/>
+  <configure name="EXEC-PREFIX" value="/usr"/>
+  <configure name="VERSION" value="6.6.5"/>
+  <configure name="CC" value="i686-pc-linux-gnu-gcc -std=gnu99 -std=gnu99"/>
+  <configure name="CFLAGS" value="-fopenmp -O2 -march=i686 -pipe -Wall -pthread"/>
+  <configure name="CPPFLAGS" value="-I/usr/include/ImageMagick"/>
+  <configure name="PCFLAGS" value="-fopenmp"/>
+  <configure name="DEFS" value="-DHAVE_CONFIG_H"/>
+  <configure name="LDFLAGS" value="-L/usr/lib -Wl,-O1 -Wl,--as-needed"/>
+  <configure name="LIBS" value="-lMagickCore -ltiff -lfreetype -ljpeg -lfontconfig -lXext -lSM -lICE -lX11 -lXt -lbz2 -lz -lm -lgomp -lpthread -lltdl"/>
+  <configure name="CXX" value="i686-pc-linux-gnu-g++"/>
+  <configure name="CXXFLAGS" value="-O2 -march=i686 -pipe -pthread"/>
+  <configure name="DISTCHECK_CONFIG_FLAGS" value="'CFLAGS=-O2 -march=i686 -pipe' 'LDFLAGS=-Wl,-O1 -Wl,--as-needed' --disable-deprecated --with-quantum-depth=16 --with-umem=no --with-autotrace=no --with-dps=no --with-djvu=no --with-dejavu-font-dir=/usr/share/fonts/dejavu --with-fftw=no --with-fpx=no --with-gslib=no --with-fontpath= --with-gs-font-dir=/usr/share/fonts/default/ghostscript --with-gvc=no --with-jp2=no --with-lcms=no --with-lcms2=no --with-lqr=no --with-openexr=no --with-windows-font-dir=/usr/share/fonts/corefonts"/>
+  <configure name="HOST" value="i686-pc-linux-gnu"/>
+  <configure name="FEATURES" value="OpenMP "/>
+  <configure name="DELEGATES" value="bzlib fontconfig freetype jpeg jng mpeg png rsvg tiff x11 xml wmf zlib"/>
+  <configure name="COPYRIGHT" value="Copyright (C) 1999-2010 ImageMagick Studio LLC"/>
+  <configure name="WEBSITE" value="http://www.imagemagick.org"/>
+  <configure name="QuantumDepth" value="16"/>
+</configuremap>

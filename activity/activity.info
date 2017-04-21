@@ -1,0 +1,7 @@
+[Activity]
+name = JAMCalibre
+service_name = org.laptop.JAMCalibre
+icon = book
+activity_version = 2
+show_launcher = yes
+class = jamcalibre.jamcalibre

@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+from calibre.web.feeds.recipes import BasicNewsRecipe
+
+class NYTimes(BasicNewsRecipe):
+
+    title       = 'New England Journal of Medicine'
+    __author__  = 'Krittika Goyal'
+    description = 'Medical news'
+    timefmt = ' [%d %b, %Y]'
+    needs_subscription = True
+    language = 'en'
+
+    no_stylesheets = True
+    remove_tags_before = dict(name='div', attrs={'align':'center'})
+    remove_tags_after  = dict(name='ol', attrs={'compact':'COMPACT'})
+    remove_tags = [
+       dict(name='iframe'),
+       #dict(name='div', attrs={'class':'related-articles'}),
+       dict(name='div', attrs={'id':['sidebar']}),
+       #dict(name='form', attrs={'onsubmit':"return verifySearch(this.w,'Keyword, citation, or author')"}),
+       dict(name='table', attrs={'align':'RIGHT'}),
+    ]
+
+
+
+    #TO LOGIN
+    def get_browser(self):
+        br = BasicNewsRecipe.get_browser()
+        br.open('http://www.nejm.org/action/showLogin?uri=http://www.nejm.org/')
+        br.select_form(name='frmLogin')
+        br['login'] = self.username
+        br['password'] = self.password
+        response = br.submit()
+        raw = response.read()
+        if '>Sign Out<' not in raw:
+            raise Exception('Login failed. Check your username and password')
+        return br
+
+    #TO GET ARTICLE TOC
+    def nejm_get_index(self):
+            return self.index_to_soup('http://content.nejm.org/current.dtl')
+
+    # To parse artice toc
+    def parse_index(self):
+            parse_soup = self.nejm_get_index()
+
+            div = parse_soup.find(id='centerTOC')
+
+            current_section = None
+            current_articles = []
+            feeds = []
+            for x in div.findAll(True):
+                if x.name == 'img' and '/toc/' in x.get('src', '') and 'uarrow.gif' not in x.get('src', ''):
+                    # Section heading found
+                    if current_articles and current_section and 'Week in the' not in current_section:
+                        feeds.append((current_section, current_articles))
+                    current_section = x.get('alt')
+                    current_articles = []
+                    self.log('\tFound section:', current_section)
+                if current_section is not None and x.name == 'strong':
+                    title = self.tag_to_string(x)
+                    a = x.parent.find('a', href=lambda x: x and '/full/' in x)
+                    if a is None:
+                        continue
+                    url = a.get('href', False)
+                    if not url or not title:
+                        continue
+                    if url.startswith('/'):
+                         url = 'http://content.nejm.org'+url
+                    self.log('\t\tFound article:', title)
+                    self.log('\t\t\t', url)
+                    if url.startswith('/'):
+                        url = 'http://online.wsj.com'+url
+                    current_articles.append({'title': title, 'url':url,
+                        'description':'', 'date':''})
+
+            if current_articles and current_section:
+                feeds.append((current_section, current_articles))
+
+            return feeds
+
+    def preprocess_html(self, soup):
+        for a in soup.findAll(text=lambda x: x and '[in this window]' in x):
+            a = a.findParent('a')
+            url = a.get('href', None)
+            if not url:
+                continue
+            if url.startswith('/'):
+                url = 'http://content.nejm.org'+url
+            isoup = self.index_to_soup(url)
+            img = isoup.find('img', src=lambda x: x and
+                    x.startswith('/content/'))
+            if img is not None:
+                img.extract()
+                table = a.findParent('table')
+                table.replaceWith(img)
+        return soup
+

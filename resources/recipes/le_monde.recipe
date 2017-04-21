@@ -1,0 +1,96 @@
+import re
+from calibre.web.feeds.recipes import BasicNewsRecipe
+
+class LeMonde(BasicNewsRecipe):
+    title                  = 'Le Monde'
+    __author__             = 'veezh'
+    description            = 'Actualités'
+    oldest_article         = 1
+    max_articles_per_feed  = 100
+    no_stylesheets         = True
+    #delay                  = 1
+    use_embedded_content   = False
+    encoding               = 'cp1252'
+    publisher              = 'lemonde.fr'
+    language               = 'fr'
+    conversion_options = {
+                             'comments'        : description
+                            ,'language'        : language
+                            ,'publisher'       : publisher
+                            ,'linearize_tables': True
+                         }
+
+    remove_empty_feeds = True
+
+    filterDuplicates = True
+
+    def preprocess_html(self, soup):
+        for alink in soup.findAll('a'):
+            if alink.string is not None:
+               tstr = alink.string
+               alink.replaceWith(tstr)
+        return soup
+
+    preprocess_regexps = [
+        (re.compile(r' \''), lambda match: ' &lsquo;'),
+        (re.compile(r'\''), lambda match: '&rsquo;'),
+        (re.compile(r'"<'), lambda match: '&nbsp;&raquo;<'),
+        (re.compile(r'>"'), lambda match: '>&laquo;&nbsp;'),
+        (re.compile(r'&rsquo;"'), lambda match: '&rsquo;«&nbsp;'),
+        (re.compile(r' "'), lambda match: ' &laquo;&nbsp;'),
+        (re.compile(r'" '), lambda match: '&nbsp;&raquo; '),
+        (re.compile(r'\("'), lambda match: '(&laquo;&nbsp;'),
+        (re.compile(r'"\)'), lambda match: '&nbsp;&raquo;)'),
+        (re.compile(r'"\.'), lambda match: '&nbsp;&raquo;.'),
+        (re.compile(r'",'), lambda match: '&nbsp;&raquo;,'),
+        (re.compile(r'"\?'), lambda match: '&nbsp;&raquo;?'),
+        (re.compile(r'":'), lambda match: '&nbsp;&raquo;:'),
+        (re.compile(r'";'), lambda match: '&nbsp;&raquo;;'),
+        (re.compile(r'"\!'), lambda match: '&nbsp;&raquo;!'),
+        (re.compile(r' :'), lambda match: '&nbsp;:'),
+        (re.compile(r' ;'), lambda match: '&nbsp;;'),
+        (re.compile(r' \?'), lambda match: '&nbsp;?'),
+        (re.compile(r' \!'), lambda match: '&nbsp;!'),
+        (re.compile(r'\s»'), lambda match: '&nbsp;»'),
+        (re.compile(r'«\s'), lambda match: '«&nbsp;'),
+        (re.compile(r' %'), lambda match: '&nbsp;%'),
+        (re.compile(r'\.jpg&nbsp;&raquo; border='), lambda match: '.jpg'),
+        (re.compile(r'\.png&nbsp;&raquo; border='), lambda match: '.png'),
+        ]
+
+    keep_only_tags    = [
+                       dict(name='div', attrs={'class':['contenu']})
+                        ]
+
+    remove_tags_after = [dict(id='appel_temoignage')]
+
+    def get_article_url(self, article):
+        link = article.get('link')
+        if 'blog' not in link:
+             return link
+
+
+
+    feeds          = [
+                      ('A la une', 'http://www.lemonde.fr/rss/une.xml'),
+                      ('International', 'http://www.lemonde.fr/rss/tag/international.xml'),
+                      ('Europe', 'http://www.lemonde.fr/rss/tag/europe.xml'),
+                      (u'Société', 'http://www.lemonde.fr/rss/tag/societe.xml'),
+                      ('Economie', 'http://www.lemonde.fr/rss/tag/economie.xml'),
+                      (u'Médias', 'http://www.lemonde.fr/rss/tag/actualite-medias.xml'),
+                      (u'Planète', 'http://www.lemonde.fr/rss/tag/planete.xml'),
+                      ('Culture', 'http://www.lemonde.fr/rss/tag/culture.xml'),
+                      ('Technologies', 'http://www.lemonde.fr/rss/tag/technologies.xml'),
+                      ('Livres', 'http://www.lemonde.fr/rss/tag/livres.xml'),
+
+                    ]
+
+    def get_cover_url(self):
+        cover_url = None
+        soup = self.index_to_soup('http://www.lemonde.fr/web/monde_pdf/0,33-0,1-0,0.html')
+        link_item = soup.find('div',attrs={'class':'pg-gch'})
+
+        if link_item and link_item.img:
+           cover_url = link_item.img['src']
+
+        return cover_url
